@@ -1,8 +1,7 @@
 package com.qualogy.quantum.resource;
 
 import com.qualogy.quantum.core.Circuit;
-import com.qualogy.quantum.core.gate.Gate;
-import com.qualogy.quantum.core.gate.Measure;
+import com.qualogy.quantum.core.gate.*;
 import com.qualogy.quantum.core.vo.QuantumGate;
 import org.apache.commons.math3.complex.Complex;
 
@@ -11,7 +10,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
 import java.util.List;
 
 @Path("/emulator")
@@ -22,14 +20,39 @@ public class QuantumResource {
 
     @POST
     public String calculateEmulation(List<QuantumGate> quantumGates){
-//        Complex[][] start = {{Complex.I.divide(Math.sqrt(4))},{Complex.I.divide(Math.sqrt(4))},{Complex.I.divide(Math.sqrt(4))},{Complex.I.divide(Math.sqrt(4))}};
-//        List<Gate> gates = new ArrayList<>();
-//        gates.add(new Measure(0));
-//        gates.add(new Measure(1));
-//        circuit.setStart(start);
-//        circuit.setGates(gates);
-//        circuit.calculateAllSteps();
-//        circuit.measureAll();
-        return null;
+        Circuit circuit = new Circuit(1);
+        Complex[][] start = {{Complex.ONE}, {Complex.ZERO}};
+
+        for (QuantumGate gate: quantumGates) {
+            switch (gate.getGate()){
+                case CNOT:
+                    circuit.addGate(new ControlledNOT());
+                    break;
+                case Fourier:
+                    circuit.addGate(new Fourier(1));
+                    break;
+                case H:
+                    circuit.addGate(new Hadamard());
+                    break;
+                case Measure:
+                    circuit.addGate(new Measure());
+                    break;
+                case X:
+                    circuit.addGate(new NotGate());
+                    break;
+                case Y:
+                    circuit.addGate(new PauliY());
+                    break;
+                case Z:
+                    circuit.addGate(new PauliZ());
+                    break;
+                case SWAP:
+                    circuit.addGate(new Swap());
+                    break;
+            }
+        }
+
+        circuit.setStart(start);
+        return circuit.calculateAllSteps();
     }
 }

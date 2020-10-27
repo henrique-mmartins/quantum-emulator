@@ -80,11 +80,6 @@ public class Circuit {
             current.getSystem()[count][0] = c[0];
             count++;
         }
-
-        for (int i = 0; i < start.getSystem().length; i++) {
-            System.out.println("START |" + MasterGate.binaryRepresentation(i, start.getqBits()) + ">: " + QuantumService.display((start.getSystem()[i][0])));
-        }
-
     }
 
 
@@ -96,7 +91,7 @@ public class Circuit {
         gates = g;
     }
 
-    public void step() {
+    public StringBuilder step() {
         for (int i = 0; i < current.getSystem().length; i++) {
             if (start.getSystem()[i][0] == null) {
                 start.getSystem()[i][0] = Complex.ZERO;
@@ -142,7 +137,7 @@ public class Circuit {
             }
             for (int i = 0; i < current.getSize(); i++) {
                 String temp = MasterGate.binaryRepresentation(i, current.getqBits());
-                if (temp.charAt(current.getqBits()  - which) != bit) {
+                if (temp.charAt(current.getqBits() - which) != bit) {
                     change[i][0] = Complex.ZERO;
                 } else if (temp.charAt(current.getqBits() - which) == bit) {
                     Complex a = current.getSystem()[i][0];
@@ -162,15 +157,32 @@ public class Circuit {
         }
         step++;
 
+        StringBuilder value = new StringBuilder();
         for (int i = 0; i < current.getSystem().length; i++) {
-            //System.out.println("MasterGate.binaryRepresentation(i, start.getqBits()) " + MasterGate.binaryRepresentation(i, start.getqBits()) );
-            System.out.println("STEP |" + MasterGate.binaryRepresentation(i, start.getqBits()) + ">: " + QuantumService.display((current.getSystem()[i][0])));
+            value.append("\"|")
+                 .append(MasterGate.binaryRepresentation(i, start.getqBits()))
+                 .append(">\" : \"").append(QuantumService.display((current.getSystem()[i][0])))
+                 .append("\"");
+            if (i < current.getSystem().length - 1){
+                value.append(", ");
+            }
         }
 
+        return value;
     }
 
-    public void calculateAllSteps() {
-        IntStream.range(step, gates.size()).forEach(i -> step());
+    public String calculateAllSteps() {
+        StringBuilder value = new StringBuilder();
+        int bound = gates.size();
+        value.append("[");
+        for (int i = step; i < bound; i++) {
+            value.append("{").append(step()).append("}");
+            if (i < bound - 1){
+                value.append(", ");
+            }
+        }
+        value.append("]");
+        return value.toString();
     }
 
 }

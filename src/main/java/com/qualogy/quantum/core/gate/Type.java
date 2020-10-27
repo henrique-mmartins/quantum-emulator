@@ -9,7 +9,5 @@ public enum Type {
     X,
     Y,
     Z,
-    Phase,
-    SqrtNOT,
     SWAP,
 }

@@ -11,11 +11,11 @@ public class ControlledNOT extends Gate {
 
     private static int[] unit = {0, 1};
 
-    ControlledNOT() {
+    public ControlledNOT() {
         super(2, matrix, unit,  Type.CNOT);
     }
 
-    ControlledNOT(int[] rows) {
+    public ControlledNOT(int[] rows) {
         super(2, matrix, rows, Type.CNOT);
     }
 }
