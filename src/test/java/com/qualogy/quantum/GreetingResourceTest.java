@@ -1,4 +1,4 @@
-package org.acme.config;
+package com.qualogy.quantum;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;

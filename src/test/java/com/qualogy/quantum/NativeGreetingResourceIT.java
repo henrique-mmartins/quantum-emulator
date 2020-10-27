@@ -1,4 +1,4 @@
-package org.acme.config;
+package com.qualogy.quantum;
 
 import io.quarkus.test.junit.NativeImageTest;
 
