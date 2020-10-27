@@ -8,10 +8,10 @@ public class PauliY extends Gate { //Pauli-Y gate
     private static int[] unit = {0};
 
     public PauliY() {
-        super(1, matrix, unit, "Y");
+        super(1, matrix, unit, Type.Y);
     }
 
     public PauliY(int[] i) {
-        super(1, matrix, i, "Y");
+        super(1, matrix, i, Type.Y);
     }
 }

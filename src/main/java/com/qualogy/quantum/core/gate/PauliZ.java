@@ -8,10 +8,10 @@ public class PauliZ extends Gate {
     private static int[] unit = {0};
 
     public PauliZ() {
-        super(1, matrix, unit, "Z");
+        super(1, matrix, unit, Type.Z);
     }
 
     public PauliZ(int[] i) {
-        super(1, matrix, i, "Z");
+        super(1, matrix, i, Type.Z);
     }
 }

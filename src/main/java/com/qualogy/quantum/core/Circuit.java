@@ -2,43 +2,74 @@ package com.qualogy.quantum.core;
 
 import com.qualogy.quantum.core.gate.Gate;
 import com.qualogy.quantum.core.gate.Measure;
+import com.qualogy.quantum.core.gate.Type;
 import org.apache.commons.math3.complex.Complex;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class Circuit {
 
-    QuantumService start;
-    List<Gate> gates;
-    QuantumService current;
-    MasterGate currentMaster;
-    int qubits;
-    int step;
-    ArrayList<Complex[][]> steps;
-    public int finalState; //this is the integer representation of the final state of the system
+    private QuantumService start;
+    private List<Gate> gates = new ArrayList<>();
+    private QuantumService current;
+    private MasterGate currentMaster;
+    private int qBits;
+    private int step = 0;
 
-    private boolean display = true;
-    private boolean displayFinal = true;
 
-    Circuit(int size) {
-        steps = new ArrayList<>();
-        qubits = size;
-        step = 0;
-        start = new QuantumService(qubits);
-        current = new QuantumService(qubits);
-        int count = 0;
-        for (Complex[] c : start.getSystem()) {
-            current.getSystem()[count][0] = c[0];
-            count++;
-        }
-        gates = new ArrayList<>();
+    public Circuit(int size) {
+        qBits = size;
+        start = new QuantumService(size);
+        current = new QuantumService(size);
         currentMaster = new MasterGate(size);
     }
 
-    Circuit(Complex[][] starter, int size) {
-        steps = new ArrayList<>();
-        start = new QuantumService(size);
+
+    private Complex[][] multiply(Complex[][] one, Complex[][] two) {
+        Complex[][] result = new Complex[two.length][two[0].length];
+        if (result[0].length == 1) {
+            for (int i = 0; i < result.length; i++) {
+                Complex sum = new Complex(0);
+                for (int j = 0; j < result.length; j++) {
+                    sum = sum.add((one[i][j].multiply(two[j][0])));
+                }
+                result[i][0] = sum;
+            }
+        } else {
+            for (int i = 0; i < result.length; i++) {
+                for (int j = 0; j < result.length; j++) {
+                    Complex sum = new Complex(0);
+                    for (int k = 0; k < result.length; k++) {
+                        sum.add((one[i][k].multiply(two[k][j])));
+                    }
+                    result[i][j] = sum;
+                }
+            }
+        }
+        return result;
+    }
+
+
+    public void measure(int i) {
+        this.addGate(new Measure(i));
+    }
+
+    public void measureAll() {
+        for (int i = 0; i < qBits; i++) {
+            this.measure(i);
+        }
+        this.calculateAllSteps();
+        for (Complex[] i : current.getSystem()) {
+            if (!i[0].equals(Complex.ZERO)) {
+                i[0] = Complex.ONE;
+            }
+        }
+    }
+
+    public void setStart(Complex[][] starter) {
+
         int count = 0;
         for (Complex[] c : starter) {
             start.getSystem()[count][0] = c[0];
@@ -49,149 +80,23 @@ public class Circuit {
             current.getSystem()[count][0] = c[0];
             count++;
         }
-        qubits = size;
-        gates = new ArrayList<>();
-        currentMaster = new MasterGate(qubits);
-        step = 0;
-    }
 
-    Circuit(Complex[][] starter, ArrayList<Gate> gatesList, int size) {
-        this(starter, size);
-        setGates(gatesList);
-    }
-
-    Complex[][] multiply(Complex[][] one, Complex[][] two) //multiplies vectors and matrices
-    {
-        Complex[][] ret = new Complex[two.length][two[0].length];
-        if (ret[0].length == 1) {
-            for (int i = 0; i < ret.length; i++) {
-                Complex sum = new Complex(0);
-                for (int j = 0; j < ret.length; j++) {
-                    sum = sum.add((one[i][j].multiply(two[j][0])));
-                }
-                ret[i][0] = sum;
-            }
-        } else {
-            for (int i = 0; i < ret.length; i++) {
-                for (int j = 0; j < ret.length; j++) {
-                    Complex sum = new Complex(0);
-                    for (int k = 0; k < ret.length; k++) {
-                        sum.add((one[i][k].multiply(two[k][j])));
-                    }
-                    ret[i][j] = sum;
-                }
-            }
-        }
-        return ret;
-    }
-
-    void setStart() //to set all qubits to 0
-    {
-        for (int r = 0; r < start.getSystem().length; r++) {
-            for (int c = 0; c < 1; c++) {
-                if (r == 0 && c == 0) {
-                    start.getSystem()[r][c] = Complex.ONE;
-                    current.getSystem()[r][c] = Complex.ONE;
-                } else {
-                    start.getSystem()[r][c] = Complex.ZERO;
-                    current.getSystem()[r][c] = Complex.ZERO;
-                }
-            }
+        for (int i = 0; i < start.getSystem().length; i++) {
+            System.out.println("START |" + MasterGate.binaryRepresentation(i, start.getqBits()) + ">: " + QuantumService.display((start.getSystem()[i][0])));
         }
 
-        if (display) {
-            for (int i = 0; i < start.getSystem().length; i++) {
-                System.out.println("|" + MasterGate.bin(i, start.getqBits()) + ">: " + QuantumService.display((start.getSystem()[i][0])));
-            }
-        }
     }
 
-    void measure(int i) {
-        this.addGate(new Measure(i));
-    }
 
-    void measureAll() {
-        for (int i = 0; i < qubits; i++) {
-            this.measure(i);
-        }
-        this.restStep();
-        for (Complex[] i : current.getSystem()) {
-            if (!i[0].equals(Complex.ZERO)) {
-                i[0] = Complex.ONE;
-            }
-        }
-
-        if (displayFinal) {
-            System.out.println(" |\n v");
-        }
-        for (int i = 0; i < current.getSystem().length; i++) {
-            if (current.getSystem()[i][0].equals(Complex.ONE)) {
-                finalState = i;
-                if (displayFinal) {
-                    System.out.println("Final State: |" + MasterGate.bin(i, start.getqBits()) + ">");
-                }
-            }
-        }
-    }
-
-    void setStart(Complex[][] starter) {
-        if (starter == null) //same as no parameter
-        {
-            for (int r = 0; r < start.getSystem().length; r++) {
-                for (int c = 0; c < 1; c++) {
-                    if (r == 0 && c == 0) {
-                        start.getSystem()[r][c] = Complex.ONE;
-                        current.getSystem()[r][c] = Complex.ONE;
-                    } else {
-                        start.getSystem()[r][c] = Complex.ZERO;
-                        current.getSystem()[r][c] = Complex.ZERO;
-                    }
-                }
-            }
-        } else {
-            int count = 0;
-            for (Complex[] c : starter) {
-                start.getSystem()[count][0] = c[0];
-                count++;
-            }
-            count = 0;
-            for (Complex[] c : start.getSystem()) {
-                current.getSystem()[count][0] = c[0];
-                count++;
-            }
-        }
-        if (display) {
-            for (int i = 0; i < start.getSystem().length; i++) {
-                System.out.println("|" + MasterGate.bin(i, start.getqBits()) + ">: " + QuantumService.display((start.getSystem()[i][0])));
-            }
-        }
-    }
-
-    public void turnOffDisplay() {
-        display = false;
-    }
-
-    public void turnOnDisplay() {
-        display = true;
-    }
-
-    public void turnOffDisplayFinal() {
-        displayFinal = false;
-    }
-
-    public void turnOnDisplayFinal() {
-        displayFinal = true;
-    }
-
-    void addGate(Gate g) {
+    public void addGate(Gate g) {
         gates.add(g);
     }
 
-    void setGates(List<Gate> g) {
+    public void setGates(List<Gate> g) {
         gates = g;
     }
 
-    void step() {
+    public void step() {
         for (int i = 0; i < current.getSystem().length; i++) {
             if (start.getSystem()[i][0] == null) {
                 start.getSystem()[i][0] = Complex.ZERO;
@@ -207,56 +112,41 @@ public class Circuit {
                 }
             }
         }
-        if (gates.get(step).getType().equals("Measure")) //measures individual qubits
-        {
+        if (gates.get(step).getType().equals(Type.Measure)) {
             currentMaster = new MasterGate(current.getSize());
-            int which = ((Measure) gates.get(step)).getQubits();
+            int which = gates.get(step).getQubits();
             Complex out;
-            if (Math.random() < current.probQOne(which)) {
+            if (Math.random() < current.calculateProbabilityStateOne(which)) {
                 out = Complex.ONE;
             } else {
                 out = Complex.ZERO;
             }
             char bit;
-            //Character op;
             if (Complex.equals(out, Complex.ZERO)) {
                 bit = '0';
-                //op = '1';
             } else if (Complex.equals(out, Complex.ONE)) {
                 bit = '1';
-                //op = '0';
             } else {
                 bit = 'u';
             }
             Complex[][] change = new Complex[current.getSize()][1];
             double div = 0;
             for (int i = 0; i < current.getSize(); i++) {
-                String temp = MasterGate.bin(i, current.getqBits());
-                if (temp.charAt(current.getqBits() - 1 - which) != bit) {
+                String temp = MasterGate.binaryRepresentation(i, current.getqBits());
+                if (temp.charAt(current.getqBits() - which) != bit) {
                     change[i][0] = Complex.ZERO;
-                } else if (temp.charAt(current.getqBits() - 1 - which) == bit) {
+                } else if (temp.charAt(current.getqBits() - which) == bit) {
                     div += Math.pow(current.getSystem()[i][0].abs(), 2);
                 }
 
             }
             for (int i = 0; i < current.getSize(); i++) {
-                String temp = MasterGate.bin(i, current.getqBits());
-                if (temp.charAt(current.getqBits() - 1 - which) != bit) {
+                String temp = MasterGate.binaryRepresentation(i, current.getqBits());
+                if (temp.charAt(current.getqBits()  - which) != bit) {
                     change[i][0] = Complex.ZERO;
-                } else if (temp.charAt(current.getqBits() - 1 - which) == bit) {
-                    //String opposite;
-					/*try
-					{
-						opposite = temp.substring(0, current.getqBits()-1-which)+op.toString()+temp.substring(current.getqBits()-which);}
-					catch(Exception e)
-					{
-						opposite = temp.substring(0, current.getqBits()-1-which)+op.toString()+temp.substring(current.getqBits()-which);
-					}
-					int opInt = Integer.parseInt(opposite, 2);*/
+                } else if (temp.charAt(current.getqBits() - which) == bit) {
                     Complex a = current.getSystem()[i][0];
                     change[i][0] = a.divide(Math.sqrt(div));
-                    //change[i][0] = a.divide(Math.hypot(a.abs(), b.abs()));
-
                 }
             }
 
@@ -264,35 +154,23 @@ public class Circuit {
                 current.getSystem()[i][0] = change[i][0];
             }
         } else {
-            currentMaster = new MasterGate(gates.get(step), gates.get(step).getRows(), qubits);
+            currentMaster = new MasterGate(gates.get(step), gates.get(step).getRows(), qBits);
             Complex[][] change = multiply(currentMaster.gate, current.getSystem());
             for (int i = 0; i < change.length; i++) {
                 current.getSystem()[i][0] = change[i][0];
             }
         }
         step++;
-        if (display) {
-            System.out.println(" |\n v");
-            for (int i = 0; i < current.getSystem().length; i++) {
-                System.out.println("|" + MasterGate.bin(i, start.getqBits()) + ">: " + QuantumService.display((current.getSystem()[i][0])));
-            }
+
+        for (int i = 0; i < current.getSystem().length; i++) {
+            //System.out.println("MasterGate.binaryRepresentation(i, start.getqBits()) " + MasterGate.binaryRepresentation(i, start.getqBits()) );
+            System.out.println("STEP |" + MasterGate.binaryRepresentation(i, start.getqBits()) + ">: " + QuantumService.display((current.getSystem()[i][0])));
         }
+
     }
 
-    void restStep()
-    {
-        for (int i = step; i < gates.size(); i++) {
-            step();
-        }
+    public void calculateAllSteps() {
+        IntStream.range(step, gates.size()).forEach(i -> step());
     }
 
-    void stepRest()
-    {
-        restStep();
-    }
-
-    void resetToBeginning() {
-        step = 0;
-        setStart(start.getSystem());
-    }
 }

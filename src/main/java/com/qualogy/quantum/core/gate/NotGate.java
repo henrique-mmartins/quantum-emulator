@@ -7,11 +7,11 @@ public class NotGate extends Gate {
             {new Complex(1), new Complex(0)}};
     private static int[] unit = {0};
 
-    NotGate() {
-        super(1, matrix, unit, "X");
+    public NotGate() {
+        super(1, matrix, unit, Type.X);
     }
 
-    NotGate(int[] i) {
-        super(1, matrix, i, "X");
+    public NotGate(int[] i) {
+        super(1, matrix, i, Type.X);
     }
 }

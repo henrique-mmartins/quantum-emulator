@@ -58,8 +58,8 @@ public class QuantumService {
         return prob(getC(i));
     }
 
-    public double probQOne(int j) //returns probability of a single qubit being one
-    {
+    //returns probability of a single qubit being one
+    public double calculateProbabilityStateOne(int j) {
         double prob = 0;
         for (int i = 0; i < size; i++) {
             if (i / ((int) Math.pow(2, j)) % 2 == 1)
@@ -68,33 +68,34 @@ public class QuantumService {
         return prob;
     }
 
-    public double probQZero(int j) {
-
-        return 1 - probQOne(j);
+    public double calculateProbabilityStateZero(int j) {
+        return 1 - calculateProbabilityStateOne(j);
     }
 
-    public static String display(Complex c) //returns formatted string for complex number
-    {
-        int sigFigs = 4; //can change at will
+    //returns formatted string for complex number
+    public static String display(Complex c)  {
 
+        int sigFigs = 2;
         double r = c.getReal();
-        boolean rInt = isInt(r);
+        boolean realInt = isInt(r);
         double i = c.getImaginary();
-        boolean iInt = isInt(i);
+        boolean imaginaryInt = isInt(i);
         boolean pureImaginary = (r == 0);
         boolean pureReal = (i == 0);
+
         String op = "+";
-        if (i < 0)
+        if (i < 0) {
             op = "";
+        }
 
         String left; //real
         String right; //imaginary
 
         if (pureImaginary) {
             left = "";
-        } else if (rInt && !pureReal) {
+        } else if (realInt && !pureReal) {
             left = "" + Math.round(r) + op;
-        } else if (rInt && pureReal) {
+        } else if (realInt && pureReal) {
             left = "" + Math.round(r);
         } else if (pureReal) {
             left = "" + (Math.round(Math.pow(10, sigFigs) * r) / Math.pow(10, sigFigs));
@@ -104,18 +105,19 @@ public class QuantumService {
 
         if (pureReal) {
             right = "";
-        } else if (iInt && Math.round(i) != 1 && Math.round(i) != -1) {
+        } else if (imaginaryInt && Math.round(i) != 1 && Math.round(i) != -1) {
             right = "" + Math.round(i) + "i";
-        } else if (iInt && Math.round(i) == 1) {
+        } else if (imaginaryInt && Math.round(i) == 1) {
             right = "i";
-        } else if (iInt && Math.round(i) == -1) {
+        } else if (imaginaryInt && Math.round(i) == -1) {
             right = "-i";
         } else {
             right = "" + (Math.round(Math.pow(10, sigFigs) * i) / Math.pow(10, sigFigs)) + "i";
         }
-        if (r == 0 && i == 0)
+        if (r == 0 && i == 0) {
             return "0";
-        return left + right;
+        }
+        return String.format("%s%s", left, right);
     }
 
     public static void transposeMatrix(Complex[][] m) {

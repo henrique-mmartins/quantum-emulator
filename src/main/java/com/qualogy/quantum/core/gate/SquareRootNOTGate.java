@@ -9,10 +9,10 @@ public class SquareRootNOTGate extends Gate {
     private static int[] unit = {0};
 
     public SquareRootNOTGate() {
-        super(1, matrix, unit, "SqrtNOT");
+        super(1, matrix, unit, Type.SqrtNOT);
     }
 
     public SquareRootNOTGate(int[] i) {
-        super(1, matrix, i, "SqrtNOT");
+        super(1, matrix, i, Type.SqrtNOT);
     }
 }

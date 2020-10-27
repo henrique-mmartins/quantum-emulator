@@ -11,10 +11,10 @@ public class Swap extends Gate {
     private static int[] unit = {0, 1};
 
     public Swap() {
-        super(2, matrix, unit, "SWAP");
+        super(2, matrix, unit, Type.SWAP);
     }
 
     public Swap(int[] i) {
-        super(2, matrix, i, "SWAP");
+        super(2, matrix, i, Type.SWAP);
     }
 }

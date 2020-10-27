@@ -8,9 +8,9 @@ public abstract class Gate {
     private int qubits;
     private int[] rows;
     private int size;
-    private String type;
+    private Type type;
 
-    public Gate(int size, Complex[][] representation, int[] rows, String type) {
+    public Gate(int size, Complex[][] representation, int[] rows, Type type) {
         qubits = size;
         matrix = new Complex[representation.length][representation[0].length];
         set(matrix, representation);
@@ -46,11 +46,11 @@ public abstract class Gate {
         this.size = size;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 

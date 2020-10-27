@@ -10,8 +10,7 @@ import java.util.List;
 public class MasterGate extends Gate {
     Complex[][] gate;
 
-    MasterGate(int size) //Creates identity gate
-    {
+    MasterGate(int size) {
         gate = new Complex[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -24,26 +23,15 @@ public class MasterGate extends Gate {
         }
     }
 
-    static String bin(Integer a, int len) //turns a number into binary representation of a certain length
-    {
-        String temp = Integer.toBinaryString(a);
-        int temp2 = len - temp.length();
-        while (temp2 > 0) {
-            temp = String.format("0%s", temp);
-            temp2 = len - temp.length();
-        }
-        return temp;
-    }
-
-    MasterGate(Gate g, int[] phase, int s) {
-        gate = new Complex[(int) Math.pow(2, s)][(int) Math.pow(2, s)];
-        for (int r = 0; r < gate.length; r++) {
-            for (int c = 0; c < gate.length; c++) {
+    MasterGate(Gate gate, int[] phase, int size) {
+        this.gate = new Complex[(int) Math.pow(2, size)][(int) Math.pow(2, size)];
+        for (int r = 0; r < this.gate.length; r++) {
+            for (int c = 0; c < this.gate.length; c++) {
                 boolean place = false;
                 StringBuilder temp = new StringBuilder();
-                String from = num(r, s);
+                String from = num(r, size);
                 String from2 = from;
-                String to = num(c, s);
+                String to = num(c, size);
                 String to2 = to;
                 for (int i : phase) {
                     temp.append(from, i, i + 1);
@@ -70,23 +58,25 @@ public class MasterGate extends Gate {
                     place = true;
                 }
                 if (place) {
-                    gate[r][c] = g.matrix[r1][c1];//.divide(Math.sqrt(Math.pow(2,s-1)));
+                    this.gate[r][c] = gate.matrix[r1][c1];
                 } else {
-                    gate[r][c] = Complex.ZERO;
+                    this.gate[r][c] = Complex.ZERO;
                 }
-
-                String tempy = "+" + gate[r][c].getImaginary() + "i ";
-                if (gate[r][c].getImaginary() == 0)
-                    tempy = " ";
-                String tempy2 = gate[r][c].getReal() + "";
-                if (gate[r][c].getReal() == (int) gate[r][c].getReal())
-                    tempy2 = (int) gate[r][c].getReal() + "";
-                System.out.print(tempy2 + tempy);
             }
         }
     }
 
-    static boolean contains(int[] i, int j) {
+    public static String binaryRepresentation(Integer a, int len) {
+        String temp = Integer.toBinaryString(a);
+        int temp2 = len - temp.length();
+        while (temp2 > 0) {
+            temp = String.format("0%s", temp);
+            temp2 = len - temp.length();
+        }
+        return temp;
+    }
+
+    public static boolean contains(int[] i, int j) {
         for (int k : i) {
             System.out.println(k + "=" + j + "?");
             if (k == j) {
@@ -115,7 +105,7 @@ public class MasterGate extends Gate {
     }
 
     public static void sortGtoL(int[] nums) {
-        List<Integer> temp = new ArrayList();
+        List<Integer> temp = new ArrayList<>();
         for (int i : nums) {
             temp.add(i);
         }

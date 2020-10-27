@@ -10,10 +10,10 @@ public class Hadamard extends Gate {
     private static int[] unit = {0};
 
     public Hadamard() {
-        super(1, matrix, unit, "H");
+        super(1, matrix, unit, Type.H);
     }
 
     public Hadamard(int[] rows) {
-        super(1, matrix, rows, "H");
+        super(1, matrix, rows, Type.H);
     }
 }
