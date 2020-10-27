@@ -2,7 +2,6 @@ package com.qualogy.quantum.resource;
 
 import com.qualogy.quantum.core.Circuit;
 import com.qualogy.quantum.core.gate.*;
-import com.qualogy.quantum.core.vo.QuantumGate;
 import org.apache.commons.math3.complex.Complex;
 
 import javax.ws.rs.Consumes;
@@ -19,12 +18,12 @@ public class QuantumResource {
 
 
     @POST
-    public String calculateEmulation(List<QuantumGate> quantumGates){
+    public String calculateEmulation(List<Type> quantumGates){
         Circuit circuit = new Circuit(1);
         Complex[][] start = {{Complex.ONE}, {Complex.ZERO}};
 
-        for (QuantumGate gate: quantumGates) {
-            switch (gate.getGate()){
+        for (Type gate: quantumGates) {
+            switch (gate){
                 case CNOT:
                     circuit.addGate(new ControlledNOT());
                     break;
