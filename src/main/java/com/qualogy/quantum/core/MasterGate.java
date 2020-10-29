@@ -1,6 +1,7 @@
 package com.qualogy.quantum.core;
 
 import com.qualogy.quantum.core.gate.Gate;
+import com.qualogy.quantum.core.gate.Type;
 import org.apache.commons.math3.complex.Complex;
 
 import java.util.ArrayList;
@@ -58,7 +59,11 @@ public class MasterGate extends Gate {
                     place = true;
                 }
                 if (place) {
-                    this.gate[r][c] = gate.matrix[r1][c1];
+                    if (gate.getType().equals(Type.Fourier)){
+                        this.gate[r][c] = gate.matrix[r][c];
+                    } else {
+                        this.gate[r][c] = gate.matrix[r1][c1];
+                    }
                 } else {
                     this.gate[r][c] = Complex.ZERO;
                 }
@@ -95,7 +100,7 @@ public class MasterGate extends Gate {
     }
 
     public static String remove(String s, int i) {
-        if (s.length() == 1)
+        if (s.isBlank() || s.isEmpty())
             return "";
         if (i == 0)
             return s.substring(1);

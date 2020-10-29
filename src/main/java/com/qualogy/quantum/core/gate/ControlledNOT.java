@@ -9,7 +9,7 @@ public class ControlledNOT extends Gate {
             {new Complex(0), new Complex(0), new Complex(0), new Complex(1)},
             {new Complex(0), new Complex(0), new Complex(1), new Complex(0)}};
 
-    private static int[] unit = {0, 1};
+    private static int[] unit = {0};
 
     public ControlledNOT() {
         super(2, matrix, unit,  Type.C);

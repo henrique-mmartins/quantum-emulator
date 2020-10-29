@@ -1,7 +1,6 @@
 package com.qualogy.quantum.core;
 
-import com.qualogy.quantum.core.gate.Gate;
-import com.qualogy.quantum.core.gate.Hadamard;
+import com.qualogy.quantum.core.gate.*;
 import org.apache.commons.math3.complex.Complex;
 
 import java.util.ArrayList;
@@ -14,7 +13,15 @@ public class MeasureTest {
         Circuit circuit = new Circuit(1);
         Complex[][] start = {{Complex.ONE}, {Complex.ZERO}};
 
+
+        circuit.addGate(new ControlledNOT());
+        circuit.addGate(new Fourier(4));
         circuit.addGate(new Hadamard());
+        circuit.addGate(new Measure());
+        circuit.addGate(new NotGate());
+        circuit.addGate(new PauliY());
+        circuit.addGate(new PauliZ());
+        circuit.addGate(new Swap());
         circuit.setStart(start);
 
         String s1 = circuit.calculateAllSteps();

@@ -99,13 +99,16 @@ public class Circuit {
                 current.getSystem()[i][0] = Complex.ZERO;
             }
         }
-        for (int i = 0; i < gates.get(step).getSize(); i++) {
-            for (int j = 0; j < gates.get(step).getSize(); j++) {
-                if (gates.get(step).matrix[i][j] == null) {
-                    gates.get(step).matrix[i][j] = Complex.ZERO;
+        if (!gates.get(step).getType().equals(Type.Fourier)){
+            for (int i = 0; i < gates.get(step).getSize(); i++) {
+                for (int j = 0; j < gates.get(step).getSize(); j++) {
+                    if (gates.get(step).matrix[i][j] == null) {
+                        gates.get(step).matrix[i][j] = Complex.ZERO;
+                    }
                 }
             }
         }
+
         if (gates.get(step).getType().equals(Type.M)) {
             currentMaster = new MasterGate(current.getSize());
             int which = gates.get(step).getQubits();
