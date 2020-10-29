@@ -7,7 +7,6 @@ import org.apache.commons.math3.complex.Complex;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class Circuit {
 
@@ -107,7 +106,7 @@ public class Circuit {
                 }
             }
         }
-        if (gates.get(step).getType().equals(Type.Measure)) {
+        if (gates.get(step).getType().equals(Type.M)) {
             currentMaster = new MasterGate(current.getSize());
             int which = gates.get(step).getQubits();
             Complex out;
@@ -159,10 +158,10 @@ public class Circuit {
 
         StringBuilder value = new StringBuilder();
         for (int i = 0; i < current.getSystem().length; i++) {
-            value.append("\"|")
+            value.append("{\"|")
                  .append(MasterGate.binaryRepresentation(i, start.getqBits()))
                  .append(">\" : \"").append(QuantumService.display((current.getSystem()[i][0])))
-                 .append("\"");
+                 .append("\"}");
             if (i < current.getSystem().length - 1){
                 value.append(", ");
             }
@@ -176,7 +175,7 @@ public class Circuit {
         int bound = gates.size();
         value.append("[");
         for (int i = step; i < bound; i++) {
-            value.append("{").append(step()).append("}");
+            value.append(step());
             if (i < bound - 1){
                 value.append(", ");
             }

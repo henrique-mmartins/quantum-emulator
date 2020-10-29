@@ -12,10 +12,10 @@ public class ControlledNOT extends Gate {
     private static int[] unit = {0, 1};
 
     public ControlledNOT() {
-        super(2, matrix, unit,  Type.CNOT);
+        super(2, matrix, unit,  Type.C);
     }
 
     public ControlledNOT(int[] rows) {
-        super(2, matrix, rows, Type.CNOT);
+        super(2, matrix, rows, Type.C);
     }
 }

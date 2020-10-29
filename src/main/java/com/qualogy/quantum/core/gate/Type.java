@@ -2,10 +2,10 @@ package com.qualogy.quantum.core.gate;
 
 public enum Type {
 
-    CNOT,
+    C,
     Fourier,
     H,
-    Measure,
+    M,
     X,
     Y,
     Z,

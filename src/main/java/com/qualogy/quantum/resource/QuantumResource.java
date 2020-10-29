@@ -20,11 +20,11 @@ public class QuantumResource {
     @POST
     public String calculateEmulation(List<Type> quantumGates){
         Circuit circuit = new Circuit(1);
-        Complex[][] start = {{Complex.ONE}, {Complex.ZERO}};
+        Complex[][] start = {{Complex.ZERO}, {Complex.ONE}};
 
         for (Type gate: quantumGates) {
             switch (gate){
-                case CNOT:
+                case C:
                     circuit.addGate(new ControlledNOT());
                     break;
                 case Fourier:
@@ -33,7 +33,7 @@ public class QuantumResource {
                 case H:
                     circuit.addGate(new Hadamard());
                     break;
-                case Measure:
+                case M:
                     circuit.addGate(new Measure());
                     break;
                 case X:
