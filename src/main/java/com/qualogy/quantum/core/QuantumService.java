@@ -94,13 +94,13 @@ public class QuantumService {
         if (pureImaginary) {
             left = "";
         } else if (realInt && !pureReal) {
-            left = "" + Math.round(r) + op;
+            left = "" + Math.abs(Math.round(r)) + op;
         } else if (realInt && pureReal) {
-            left = "" + Math.round(r);
+            left = "" +  Math.abs(Math.round(r));
         } else if (pureReal) {
-            left = "" + (Math.round(Math.pow(10, sigFigs) * r) / Math.pow(10, sigFigs));
+            left = "" +  Math.abs((Math.round(Math.pow(10, sigFigs) * r) / Math.pow(10, sigFigs)));
         } else {
-            left = "" + (Math.round(Math.pow(10, sigFigs) * r) / Math.pow(10, sigFigs)) + op;
+            left = "" +  Math.abs((Math.round(Math.pow(10, sigFigs) * r) / Math.pow(10, sigFigs))) + op;
         }
 
         if (pureReal) {

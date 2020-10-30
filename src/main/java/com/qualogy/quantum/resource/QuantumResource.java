@@ -3,6 +3,8 @@ package com.qualogy.quantum.resource;
 import com.qualogy.quantum.core.Circuit;
 import com.qualogy.quantum.core.gate.*;
 import org.apache.commons.math3.complex.Complex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -16,6 +18,7 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class QuantumResource {
 
+    private static Logger LOGGER = LoggerFactory.getLogger(QuantumResource.class);
 
     @POST
     public String calculateEmulation(List<Type> quantumGates){
@@ -52,6 +55,8 @@ public class QuantumResource {
         }
 
         circuit.setStart(start);
-        return circuit.calculateAllSteps();
+        String allSteps = circuit.calculateAllSteps();
+        LOGGER.info(allSteps);
+        return allSteps;
     }
 }

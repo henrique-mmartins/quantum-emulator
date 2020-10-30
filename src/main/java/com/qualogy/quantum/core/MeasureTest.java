@@ -21,7 +21,6 @@ public class MeasureTest {
         circuit.addGate(new NotGate());
         circuit.addGate(new PauliY());
         circuit.addGate(new PauliZ());
-        circuit.addGate(new Swap());
         circuit.setStart(start);
 
         String s1 = circuit.calculateAllSteps();

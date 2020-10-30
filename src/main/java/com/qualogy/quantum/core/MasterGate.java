@@ -81,6 +81,16 @@ public class MasterGate extends Gate {
         return temp;
     }
 
+    public static String stringRepresentation(Integer a, int len) {
+        switch (a){
+            case 0:
+                return "zero";
+            case 1:
+                return "one";
+        }
+        return "";
+    }
+
     public static boolean contains(int[] i, int j) {
         for (int k : i) {
             System.out.println(k + "=" + j + "?");

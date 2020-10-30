@@ -161,10 +161,10 @@ public class Circuit {
 
         StringBuilder value = new StringBuilder();
         for (int i = 0; i < current.getSystem().length; i++) {
-            value.append("{\"|")
-                 .append(MasterGate.binaryRepresentation(i, start.getqBits()))
-                 .append(">\" : \"").append(QuantumService.display((current.getSystem()[i][0])))
-                 .append("\"}");
+            value.append("\"")
+                 .append(MasterGate.stringRepresentation(i, start.getqBits()))
+                 .append("\" : \"").append(QuantumService.display((current.getSystem()[i][0])))
+                 .append("\"");
             if (i < current.getSystem().length - 1){
                 value.append(", ");
             }
@@ -178,7 +178,7 @@ public class Circuit {
         int bound = gates.size();
         value.append("[");
         for (int i = step; i < bound; i++) {
-            value.append(step());
+            value.append("{").append(step()).append("}");
             if (i < bound - 1){
                 value.append(", ");
             }
